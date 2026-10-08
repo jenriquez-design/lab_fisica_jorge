@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VECTORES — Visualiza, Calcula y Comprende | Laboratorio Virtual de Física</title>
+  <meta name="description" content="Laboratorio virtual interactivo para la comprensión rigurosa de vectores en 2D y 3D, método del paralelogramo, método del polígono, producto escalar, producto vectorial, aplicaciones físicas y quiz multinivel.">
+
+  <!-- Google Fonts: Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Three.js & OrbitControls (Local) -->
+  <script src="libs/three.min.js"></script>
+  <script src="libs/OrbitControls.js"></script>
+</head>
+<body>
+
+  <!-- Sticky Scroll Reading Progress Bar -->
+  <div id="progressBar" class="scroll-progress-bar"></div>
+
+  <!-- ==========================================================================
+       HEADER & NAVIGATION (Section 19)
+       ========================================================================== -->
+  <header class="site-header" id="top">
+    <div class="header-inner">
+      <a href="#top" class="brand-logo" title="Vectores — Laboratorio Virtual">
+        <div class="brand-icon">⮑</div>
+        <span>VECTORES<span style="color:var(--primary); font-weight:900;">LAB</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#top" class="nav-link">Inicio</a></li>
+          <li><a href="#concepto" class="nav-link">Concepto</a></li>
+          <li><a href="#lab-2d" class="nav-link">Lab 2D</a></li>
+          <li><a href="#operaciones" class="nav-link">Operaciones</a></li>
+          <li><a href="#paralelogramo" class="nav-link">Paralelogramo</a></li>
+          <li><a href="#poligono" class="nav-link">Polígono</a></li>
+          <li><a href="#componentes" class="nav-link">Componentes</a></li>
+          <li><a href="#escalar" class="nav-link">Prod. Escalar</a></li>
+          <li><a href="#vectorial" class="nav-link">Prod. Vectorial</a></li>
+          <li><a href="#espacio-3d" class="nav-link">Lab 3D</a></li>
+          <li><a href="#fisica-real" class="nav-link">Física Real</a></li>
+          <li><a href="#quiz" class="nav-link">Quiz</a></li>
+          <li><a href="#errores" class="nav-link">Errores Frecuentes</a></li>
+          <li><a href="#formulario" class="nav-link">Formulario</a></li>
+          <li><a href="#reto" class="nav-link">Reto Final</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Modo Profesor -->
+        <button id="btnTeacherMode" class="teacher-mode-btn" onclick="toggleTeacherMode()" title="Ocultar soluciones para proyectar y formular preguntas en clase">
+          <span>👨‍🏫</span> Modo Profesor
+        </button>
+        <!-- Tema Claro / Oscuro -->
+        <button id="btnThemeToggle" class="theme-toggle-btn" title="Alternar tema claro/oscuro">☀️</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky Teacher Mode Active Banner -->
+  <div class="teacher-banner" id="teacherBanner">
+    <div class="teacher-banner-inner">
+      <div class="teacher-banner-text">
+        <span>🎓</span>
+        <strong>MODO PROFESOR ACTIVO:</strong> Las soluciones y resultados numéricos están ocultos. Haz clic en cualquier recuadro <code>[ ? ]</code> para revelar el valor durante tu explicación en clase.
+      </div>
+      <div class="teacher-banner-actions">
+        <button class="btn-teacher-sub" onclick="teacherRevealAll()">👁 Revelar Todo</button>
+        <button class="btn-teacher-sub" onclick="teacherHideAll()">🔒 Ocultar Todo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Color Legend Bar (Section 1) -->
+  <div class="global-legend-bar">
+    <div class="legend-bar-inner">
+      <span class="legend-title">Código de Colores:</span>
+      <div class="legend-item"><span class="legend-dot dot-vec-a"></span> 🔵 Vector A</div>
+      <div class="legend-item"><span class="legend-dot dot-vec-b"></span> 🟣 Vector B</div>
+      <div class="legend-item"><span class="legend-dot dot-vec-res"></span> 🟢 Resultante (R)</div>
+      <div class="legend-item"><span class="legend-dot dot-vec-comp"></span> 🟠 Componentes (x, y)</div>
+      <div class="legend-item"><span class="legend-dot dot-vec-axes"></span> 🔴 Ejes Cartesianos / Alertas</div>
+      <div class="legend-item"><span class="legend-dot dot-vec-neg"></span> Vector Opuesto (-B)</div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================== -->
+  <main class="main-content">
+
+    <!-- 1. HERO / PORTADA (Section 2) -->
+    <section class="hero-section" id="hero">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span>⚡</span> Laboratorio Educativo Interactivo de Física
+        </div>
+        <h1 class="hero-title">
+          VECTORES — <span class="gradient-text">Visualiza, Calcula y Comprende</span>
+        </h1>
+        <p class="hero-description">
+          Explora las operaciones vectoriales en 2D y 3D y descubre cómo se relacionan con el mundo físico. Manipula componentes en tiempo real, comprende los métodos del paralelogramo y del polígono, y domina los productos escalar y vectorial.
+        </p>
+        <p class="hero-quote">
+          "Un vector no solo tiene un valor: tiene magnitud, dirección y sentido."
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="#concepto" class="btn btn-primary">🚀 Comenzar a explorar</a>
+          <a href="#lab-2d" class="btn btn-outline">📐 Laboratorio 2D</a>
+          <a href="#espacio-3d" class="btn btn-outline">🌐 Laboratorio 3D</a>
+          <a href="#quiz" class="btn btn-outline">📝 Resolver Quiz</a>
+        </div>
+
+        <div class="hero-features-chips">
+          <div class="feature-chip">✓ Arrastre en tiempo real</div>
+          <div class="feature-chip">✓ Renderizado 3D con Three.js</div>
+          <div class="feature-chip">✓ Rigor matemático en cuadrantes (atan2)</div>
+          <div class="feature-chip">✓ Modo Profesor para proyecciones</div>
+        </div>
+      </div>
+
+      <div class="hero-visual-card">
+        <div class="hero-canvas-container">
+          <canvas id="heroCanvas" class="canvas-element"></canvas>
+        </div>
+        <div class="hero-interactive-tip">
+          💡 Mueve el cursor sobre el lienzo para interactuar con el campo vectorial dinámico
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. ¿QUÉ ES UN VECTOR? (Section 3) -->
+    <section class="section-block" id="concepto">
+      <div class="section-header">
+        <span class="section-tag">Fundamentos</span>
+        <h2 class="section-title">2. ¿Qué es un Vector?</h2>
+        <p class="section-subtitle">
+          Magnitud o módulo, dirección, sentido, punto de aplicación, componentes rectangulares y vector unitario.
+        </p>
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-canvas-card">
+          <div class="canvas-toolbar">
+            <span class="canvas-badge">📍 Plano Cartesiano Interactivo</span>
+            <div class="canvas-controls-mini">
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="conceptSnapGrid" checked> Ajustar a enteros
+              </label>
+              <button class="btn btn-outline btn-sm" id="btnResetConcept">↺ Reiniciar</button>
+            </div>
+          </div>
+
+          <div class="canvas-viewport-wrapper">
+            <canvas id="conceptCanvas" class="canvas-element"></canvas>
+            <div class="canvas-drag-hint">🖱 Arrastra la saeta del vector A</div>
+          </div>
+        </div>
+
+        <div class="lab-controls-card">
+          <div class="theory-callout">
+            <h4>Diferencia entre Escalar y Vector</h4>
+            <p>
+              Un <strong>escalar</strong> queda completamente definido por su valor numérico y unidad (ej. masa: 5 kg, temperatura: 20 °C). Un <strong>vector</strong> requiere <strong>magnitud</strong> (longitud), <strong>dirección</strong> (recta o ángulo de inclinación), <strong>sentido</strong> (hacia dónde apunta la saeta) y <strong>punto de aplicación</strong>.
+            </p>
+          </div>
+
+          <!-- Controls -->
+          <div class="param-card">
+            <div class="param-header">
+              <span class="param-title" style="color:var(--vec-a)">🔷 Vector A = (Ax, Ay)</span>
+            </div>
+            <div class="inputs-row">
+              <div class="input-field-group">
+                <label>Componente Horizontal (Ax):</label>
+                <div class="input-slider-combo">
+                  <input type="range" id="conceptAxSlider" min="-8" max="8" step="0.5" value="5">
+                  <input type="number" id="conceptAx" class="coord-num-input" value="5" step="0.5">
+                </div>
+              </div>
+              <div class="input-field-group">
+                <label>Componente Vertical (Ay):</label>
+                <div class="input-slider-combo">
+                  <input type="range" id="conceptAySlider" min="-8" max="8" step="0.5" value="3">
+                  <input type="number" id="conceptAy" class="coord-num-input" value="3" step="0.5">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-time Math Breakdown -->
+          <div class="math-display-card">
+            <div class="math-display-header">Propiedades Dinámicas de A en Tiempo Real</div>
+            <div class="math-row">
+              <span>Coordenadas rectangulares:</span>
+              <span class="math-val-highlight">A = <span class="math-val-result" id="conceptCompDisplay">(5.0, 3.0)</span></span>
+            </div>
+            <div class="math-row">
+              <span>Magnitud |A| = √(Ax² + Ay²):</span>
+              <span class="math-val-highlight">|A| = <span class="math-val-result" id="conceptMagDisplay">5.83</span> u</span>
+            </div>
+            <div class="math-row">
+              <span>Dirección θ = atan2(Ay, Ax):</span>
+              <span class="math-val-highlight">θ = <span class="math-val-result" id="conceptAngleDisplay">30.96°</span></span>
+            </div>
+            <div class="math-row">
+              <span>Sentido y Cuadrante:</span>
+              <span class="math-val-result" id="conceptSentidoDisplay" style="font-size:0.82rem;">Cuadrante I (+X, +Y)</span>
+            </div>
+            <div class="math-row">
+              <span>Vector Unitario û = A / |A|:</span>
+              <span class="math-val-highlight math-val-result" id="conceptUnitDisplay">û = 0.86 î + 0.51 ĵ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. LABORATORIO DE VECTORES 2D (Section 4) -->
+    <section class="section-block" id="lab-2d">
+      <div class="section-header">
+        <span class="section-tag">Espacio Bidimensional</span>
+        <h2 class="section-title">3. Laboratorio de Vectores 2D</h2>
+        <p class="section-subtitle">
+          Plano cartesiano interactivo con escala, zoom, pan, manipulación de vectores A y B, y cálculo simultáneo de la resultante R = A + B.
+        </p>
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-canvas-card">
+          <div class="canvas-toolbar">
+            <div class="canvas-controls-mini">
+              <button class="btn btn-outline btn-sm" id="btnZoomIn2D" title="Acercar (Zoom In)">🔍 +</button>
+              <button class="btn btn-outline btn-sm" id="btnZoomOut2D" title="Alejar (Zoom Out)">🔍 -</button>
+              <button class="btn btn-outline btn-sm" id="btnResetZoom2D" title="Restablecer Vista">⛶ Vista</button>
+              <label class="toggle-switch-label" style="margin-left:0.5rem;">
+                <input type="checkbox" id="planeShowProj" checked> Componentes
+              </label>
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="planeShowAngles" checked> Ángulos
+              </label>
+            </div>
+            <button class="btn btn-outline btn-sm" id="btnResetPlane2D">↺ Reiniciar</button>
+          </div>
+
+          <div class="canvas-viewport-wrapper">
+            <canvas id="plane2DCanvas" class="canvas-element"></canvas>
+            <div class="canvas-drag-hint">🖱 Arrastra la saeta de A (Azul) o B (Morado) | Clic derecho para desplazar el plano (Pan)</div>
+          </div>
+        </div>
+
+        <div class="lab-controls-card">
+          <div class="theory-callout">
+            <h4>Superposición Vectorial en 2D</h4>
+            <p>
+              Toda modificación actualiza inmediatamente la representación gráfica y las componentes analíticas: <strong>Rx = Ax + Bx</strong>, <strong>Ry = Ay + By</strong>, <strong>|R| = √(Rx² + Ry²)</strong> y <strong>θR = atan2(Ry, Rx)</strong>.
+            </p>
+          </div>
+
+          <!-- Coordinate Inputs -->
+          <div class="inputs-row">
+            <div class="param-card">
+              <span class="param-title" style="color:var(--vec-a)">🔷 Vector A = (Ax, Ay)</span>
+              <div class="inputs-row">
+                <div class="input-field-group">
+                  <label>Ax:</label>
+                  <input type="number" id="planeAx" class="coord-num-input" value="4" step="1">
+                </div>
+                <div class="input-field-group">
+                  <label>Ay:</label>
+                  <input type="number" id="planeAy" class="coord-num-input" value="3" step="1">
+                </div>
+              </div>
+            </div>
+
+            <div class="param-card">
+              <span class="param-title" style="color:var(--vec-b)">🟣 Vector B = (Bx, By)</span>
+              <div class="inputs-row">
+                <div class="input-field-group">
+                  <label>Bx:</label>
+                  <input type="number" id="planeBx" class="coord-num-input" value="-2" step="1">
+                </div>
+                <div class="input-field-group">
+                  <label>By:</label>
+                  <input type="number" id="planeBy" class="coord-num-input" value="4" step="1">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Metrics -->
+          <div class="math-display-card">
+            <div class="math-display-header">Métricas y Resultante R = A + B</div>
+            <div class="math-row">
+              <span style="color:var(--vec-a)">|A| y θA:</span>
+              <span class="math-val-highlight"><span class="math-val-result" id="planeMagA">5.00</span> u a <span class="math-val-result" id="planeAngleA">36.87°</span></span>
+            </div>
+            <div class="math-row">
+              <span style="color:var(--vec-b)">|B| y θB:</span>
+              <span class="math-val-highlight"><span class="math-val-result" id="planeMagB">4.47</span> u a <span class="math-val-result" id="planeAngleB">116.57°</span></span>
+            </div>
+            <div class="math-row">
+              <span>Ángulo entre A y B (θ):</span>
+              <span class="math-val-highlight math-val-result" id="planeAngleBetween">79.70°</span>
+            </div>
+            <div class="math-row" style="background:var(--bg-card-subtle); padding:0.5rem; border-radius:var(--radius-sm); border:1px solid rgba(16,185,129,0.3);">
+              <strong style="color:var(--vec-res);">Resultante R (Verde):</strong>
+              <span class="math-val-highlight" style="color:var(--vec-res);">
+                R = (<span class="math-val-result" id="planeRxVal">2.0</span>, <span class="math-val-result" id="planeRyVal">7.0</span>) | |R| = <span class="math-val-result" id="planeRMagVal">7.28</span> u | θ = <span class="math-val-result" id="planeRAngleVal">74.05°</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. OPERACIONES CON VECTORES (Section 5) -->
+    <section class="section-block" id="operaciones">
+      <div class="section-header">
+        <span class="section-tag">Álgebra Vectorial</span>
+        <h2 class="section-title">4. Operaciones con Vectores</h2>
+        <p class="section-subtitle">
+          Suma (A + B), Diferencia (A - B = A + (-B)) y Multiplicación por un Escalar k (kA).
+        </p>
+      </div>
+
+      <!-- Predicción Pedagógica Interactiva -->
+      <div class="prediction-box" data-expl-correct="Un escalar negativo invierte el sentido del vector en 180° y su magnitud se multiplica por el valor absoluto del escalar (|k| = 1.5)." data-expl-wrong="Recuerda que la magnitud siempre es un escalar positivo, pero el signo negativo del escalar cambia el sentido de la saeta hacia el lado opuesto.">
+        <div class="prediction-title">💡 Pregunta de Predicción Activa</div>
+        <div class="prediction-question">
+          ¿Qué ocurrirá con el vector A si lo multiplicamos por un escalar k = -1.5?
+        </div>
+        <div class="prediction-options">
+          <button class="btn-prediction-opt" data-correct="false">A) Aumenta su tamaño pero conserva exactamente su dirección y sentido.</button>
+          <button class="btn-prediction-opt" data-correct="true">B) Su magnitud aumenta al 150% (|kA| = 1.5|A|) y su sentido se invierte en 180°.</button>
+          <button class="btn-prediction-opt" data-correct="false">C) El vector resultante se vuelve perpendicular formando 90° con A.</button>
+        </div>
+        <div class="prediction-feedback"></div>
+      </div>
+
+      <!-- 4.1 Multiplicación por Escalar (kA) -->
+      <div style="margin: 1.5rem 0 1rem;">
+        <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--text-main);">
+          Multiplicación por Escalar (k · A)
+        </h3>
+        <p style="color:var(--text-muted); font-size:0.95rem;">
+          Modifica el factor k para observar cómo varía la longitud del vector y cómo los valores negativos invierten su sentido.
+        </p>
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-canvas-card">
+          <div class="canvas-toolbar">
+            <span class="canvas-badge">Escalamiento Vectorial</span>
+            <span style="font-size:0.82rem; color:var(--text-muted);">Vector Original (Azul Punteado) | kA (Verde/Rosa)</span>
+          </div>
+          <div class="canvas-viewport-wrapper">
+            <canvas id="scalarCanvas" class="canvas-element"></canvas>
+            <div class="canvas-drag-hint">Arrastra A para cambiar el vector base | Mueve el control k</div>
+          </div>
+        </div>
+
+        <div class="lab-controls-card">
+          <div class="param-card">
+            <div class="input-field-group">
+              <label>Factor Escalar (k): <strong id="scalarKVal" style="color:var(--primary); font-size:1.1rem;">1.5</strong></label>
+              <input type="range" id="scalarKSlider" min="-3" max="3" step="0.1" value="1.5">
+            </div>
+
+            <div class="scalar-preset-bar">
+              <button class="scalar-preset-btn" data-k="2">k > 1 (k = 2)</button>
+              <button class="scalar-preset-btn" data-k="0.5">0 < k < 1 (k = 0.5)</button>
+              <button class="scalar-preset-btn" data-k="0">k = 0 (Nulo)</button>
+              <button class="scalar-preset-btn" data-k="-1">k = -1 (Opuesto)</button>
+              <button class="scalar-preset-btn" data-k="-2">k < 0 (k = -2)</button>
+            </div>
+          </div>
+
+          <div class="step-instruction-box" id="scalarEffectDisplay">
+            🔍 k > 1 : Dilatación (El vector se alarga conservando su sentido)
+          </div>
+
+          <div class="math-display-card">
+            <div class="math-display-header">Efecto Algebraico</div>
+            <div class="math-row">
+              <span>Vector Original A:</span>
+              <span class="math-val-highlight">(<span id="scalarAxDisplay">3</span>, <span id="scalarAyDisplay">2</span>)</span>
+            </div>
+            <div class="math-row">
+              <span>Vector Escalado kA = (k·Ax, k·Ay):</span>
+              <span class="math-val-highlight math-val-result">(<span id="scalarKAxDisplay">4.5</span>, <span id="scalarKAyDisplay">3.0</span>)</span>
+            </div>
+            <div class="math-row">
+              <span>Magnitud |kA| = |k| · |A|:</span>
+              <span class="math-val-highlight math-val-result" id="scalarMagDisplay">5.41 u</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.2 Resta de Vectores -->
+      <div style="margin: 2.5rem 0 1rem;">
+        <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--text-main);">
+          Resta de Vectores: A - B = A + (-B)
+        </h3>
+        <p style="color:var(--text-muted); font-size:0.95rem;">
+          Restar el vector B equivale exactamente a sumar el vector opuesto -B (mismo módulo y dirección, pero sentido contrario).
+        </p>
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-canvas-card">
+          <div class="canvas-toolbar">
+            <label class="toggle-switch-label">
+              <input type="checkbox" id="toggleDiffOpposite" checked> Mostrar Vector Opuesto (-B en Rosa)
+            </label>
+            <button class="btn btn-outline btn-sm" id="btnResetDiff">↺ Reiniciar</button>
+          </div>
+          <div class="canvas-viewport-wrapper">
+            <canvas id="diffCanvas" class="canvas-element"></canvas>
+            <div class="canvas-drag-hint">Arrastra A o B para ver la diferencia en tiempo real</div>
+          </div>
+        </div>
+
+        <div class="lab-controls-card">
+          <div class="inputs-row">
+            <div class="param-card">
+              <span class="param-title" style="color:var(--vec-a)">🔷 A = (Ax, Ay)</span>
+              <div class="inputs-row">
+                <input type="number" id="diffAx" class="coord-num-input" value="5" step="1">
+                <input type="number" id="diffAy" class="coord-num-input" value="3" step="1">
+              </div>
+            </div>
+            <div class="param-card">
+              <span class="param-title" style="color:var(--vec-b)">🟣 B = (Bx, By)</span>
+              <div class="inputs-row">
+                <input type="number" id="diffBx" class="coord-num-input" value="2" step="1">
+                <input type="number" id="diffBy" class="coord-num-input" value="4" step="1">
+              </div>
+            </div>
+          </div>
+
+          <div class="math-display-card">
+            <div class="math-display-header">Cálculo de la Diferencia D = A - B</div>
+            <div class="math-row">
+              <span>Vector Opuesto -B:</span>
+              <span class="math-val-highlight" style="color:var(--vec-neg-b);">-B = (<span id="diffNegBxVal">-2</span>, <span id="diffNegByVal">-4</span>)</span>
+            </div>
+            <div class="math-row">
+              <span>Dx = Ax - Bx:</span>
+              <span class="math-val-highlight"><span id="diffAxVal">5</span> - <span id="diffBxVal">2</span> = <span class="math-val-result" id="diffRxVal">3</span></span>
+            </div>
+            <div class="math-row">
+              <span>Dy = Ay - By:</span>
+              <span class="math-val-highlight"><span id="diffAyVal">3</span> - <span id="diffByVal">4</span> = <span class="math-val-result" id="diffRyVal">-1</span></span>
+            </div>
+            <div class="math-row">
+              <span>Magnitud |D|:</span>
+              <span class="math-val-highlight">|D| = <span class="math-val-result" id="diffRMag">3.16</span> u</span>
+            </div>
+            <div class="math-row">
+              <span>Dirección θD:</span>
+              <span class="math-val-highlight">θ = <span class="math-val-result" id="diffRAngle">341.57°</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. MÉTODO DEL PARALELOGRAMO (Section 6) -->
+    <section class="section-block" id="paralelogramo">
+      <div class="section-header">
+        <span class="section-tag">Método Geométrico 1</span>
+        <h2 class="section-title">5. Método del Paralelogramo</h2>
+        <p class="section-subtitle">
+          Construcción geométrica paso a paso para sumar dos vectores concurrentes que comparten el mismo punto de origen.
+        </p>
+      </div>
+
+      <div class="theory-callout" style="margin-bottom: 1.5rem;">
+        <h4>¿Cuándo utilizar el Método del Paralelogramo?</h4>
+        <p>
+          Este método es ideal cuando se tienen <strong>exactamente dos vectores que parten del mismo punto de aplicación</strong> (como dos remolcadores tirando de un barco o dos cables que sostienen una lámpara). Se construyen líneas paralelas a cada vector pasando por el extremo del otro, formando un paralelogramo cuya diagonal principal desde el origen representa la resultante <strong>R = A + B</strong>.
+        </p>
+      </div>
+
+      <!-- Step nodes ribbon -->
+      <div class="step-ribbon">
+        <div class="step-node para-step-node" data-step="1">Paso 1: Dibujar A</div>
+        <div class="step-node para-step-node" data-step="2">Paso 2: Dibujar B</div>
+        <div class="step-node para-step-node" data-step="3">Paso 3: Trazar Paralelas</div>
+        <div class="step-node para-step-node" data-step="4">Paso 4: Formar Paralelogramo</div>
+        <div class="step-node para-step-node active" data-step="5">Paso 5: Trazar Diagonal R</div>
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-canvas-card">
+          <div class="canvas-toolbar">
+            <div class="canvas-controls-mini">
+              <button class="btn btn-outline btn-sm" id="btnParaPrev">← Paso Anterior</button>
+              <button class="btn btn-outline btn-sm" id="btnParaNext">Paso Siguiente →</button>
+            </div>
+          </div>
+
+          <div class="canvas-viewport-wrapper">
+            <canvas id="parallelogramCanvas" class="canvas-element"></canvas>
+            <div class="canvas-drag-hint">Arrastra A (Azul) o B (Morado) para ver el paralelogramo adaptarse</div>
+          </div>
+        </div>
+
+        <div class="lab-controls-card">
+          <div class="param-card">
+            <div class="param-header">
+              <span class="param-title">Activar / Desactivar Elementos:</span>
+            </div>
+            <div class="parallelogram-toggles-grid">
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="paraTogParallels" data-target="parallels" checked> Líneas Paralelas
+              </label>
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="paraTogParallelogram" data-target="parallelogram" checked> Área Paralelogramo
+              </label>
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="paraTogResultant" data-target="resultant" checked> Vector Resultante (R)
+              </label>
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="paraTogComp" data-target="components"> Componentes
+              </label>
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="paraTogValues" data-target="values" checked> Valores Numéricos
+              </label>
+            </div>
+          </div>
+
+          <div class="math-display-card" id="paraValuesCard">
+            <div class="math-display-header">Resultado Numérico de la Diagonal</div>
+            <div class="math-row">
+              <span>Rx = Ax + Bx:</span>
+              <span class="math-val-highlight math-val-result" id="paraRxVal">7</span>
+            </div>
+            <div class="math-row">
+              <span>Ry = Ay + By:</span>
+              <span class="math-val-highlight math-val-result" id="paraRyVal">5</span>
+            </div>
+            <div class="math-row">
+              <span>Magnitud |R|:</span>
+              <span class="math-val-highlight math-val-result" id="paraRMag">8.60 u</span>
+            </div>
+            <div class="math-row">
+              <span>Dirección θR:</span>
+              <span class="math-val-highlight math-val-result" id="paraRAngle">35.54°</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. MÉTODO DEL POLÍGONO (Section 7) -->
+    <section class="section-block" id="poligono">
+      <div class="section-header">
+        <span class="section-tag">Método Geométrico 2 (Multivectorial)</span>
+        <h2 class="section-title">6. Método del Polígono (Cabeza a Cola)</h2>
+        <p class="section-subtitle">
+          Suma gráfica de 2, 3, 4 o más vectores encadenados sucesivamente: A + B + C + D = R.
+        </p>
+      </div>
+
+      <div class="polygon-controls-bar">
+        <div class="polygon-step-indicator">
+          <div class="step-bubble" id="polyStepBubble">0</div>
+          <span>Paso de Construcción</span>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btnPolyAuto">▶ Construcción Automática</button>
+          <button class="btn btn-outline" id="btnPolyPrev" disabled>← Paso Anterior</button>
+          <button class="btn btn-outline" id="btnPolyNext">Paso Siguiente →</button>
+          <button class="btn btn-outline" id="btnPolyReset">↺ Reiniciar</button>
+        </div>
+
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn btn-outline btn-sm" id="btnPolyAdd">+ Añadir Vector</button>
+          <button class="btn btn-outline btn-sm" id="btnPolyRemove">- Quitar Vector</button>
+        </div>
+      </div>
+
+      <div class="step-instruction-box" id="polyStepText">
+        Paso 0: Todos los vectores parten del origen. Haz clic en "Construcción Automática" o "Paso Siguiente" para ver cómo se concatenan cabeza a cola.
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-canvas-card">
+          <div class="canvas-viewport-wrapper">
+            <canvas id="polygonCanvas" class="canvas-element"></canvas>
+            <div class="canvas-drag-hint">💡 Observa cómo cada vector se traslada paralelamente al extremo del anterior</div>
+          </div>
+        </div>
+
+        <div class="lab-controls-card">
+          <div class="theory-callout">
+            <h4>Principio de los Vectores Libres</h4>
+            <p>
+              Un vector libre puede trasladarse a cualquier punto del plano sin modificarse, siempre que <strong>mantenga invariable su magnitud, su dirección y su sentido</strong>. Por ello, trasladar el origen de B a la saeta de A produce exactamente la misma suma física.
+            </p>
+          </div>
+
+          <div class="param-card">
+            <div class="param-header">
+              <span class="param-title">Cadena de Vectores Activos:</span>
+            </div>
+            <div class="vectors-config-list" id="polyVectorsList"></div>
+          </div>
+
+          <div class="math-display-card">
+            <div class="math-display-header">Vector Resultante Total (R)</div>
+            <div class="math-row">
+              <span>Rx (Suma de componentes X):</span>
+              <span class="math-val-highlight math-val-result" id="polyRxVal">3.00</span>
+            </div>
+            <div class="math-row">
+              <span>Ry (Suma de componentes Y):</span>
+              <span class="math-val-highlight math-val-result" id="polyRyVal">8.00</span>
+            </div>
+            <div class="math-row">
+              <span>Magnitud |R|:</span>
+              <span class="math-val-highlight math-val-result" id="polyRMag">8.54 u</span>
+            </div>
+            <div class="math-row">
+              <span>Dirección θR:</span>
+              <span class="math-val-highlight math-val-result" id="polyRAngle">69.44°</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. COMPONENTES DE UN VECTOR (Section 8) -->
+    <section class="section-block" id="componentes">
+      <div class="section-header">
+        <span class="section-tag">Descomposición Rectangular</span>
+        <h2 class="section-title">7. Componentes de un Vector</h2>
+        <p class="section-subtitle">
+          Ax = A cos(θ) y Ay = A sin(θ). Triángulo rectángulo, vectores unitarios î y ĵ, y manejo riguroso de cuadrantes.
+        </p>
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-canvas-card">
+          <div class="canvas-toolbar">
+            <span class="canvas-badge">Triángulo Rectángulo & Proyecciones</span>
+          </div>
+          <div class="canvas-viewport-wrapper">
+            <canvas id="componentCanvas" class="canvas-element"></canvas>
+            <div class="canvas-drag-hint">Arrastra el vector o usa los controles para cambiar ángulo y magnitud</div>
+          </div>
+        </div>
+
+        <div class="lab-controls-card">
+          <div class="param-card">
+            <div class="input-field-group">
+              <label>Ángulo de Inclinación θ: <strong id="compAngleDisplay" style="color:var(--primary);">36.9°</strong></label>
+              <input type="range" id="compAngleSlider" min="0" max="360" step="1" value="37">
+            </div>
+            <div class="input-field-group">
+              <label>Magnitud |A|: <strong id="compMagDisplay" style="color:var(--primary);">5.0 u</strong></label>
+              <input type="range" id="compMagSlider" min="1" max="7" step="0.5" value="5">
+            </div>
+          </div>
+
+          <div class="step-instruction-box" id="compQuadrantDisplay">
+            I Cuadrante (Ax > 0, Ay > 0)
+          </div>
+
+          <div class="math-display-card">
+            <div class="math-display-header">Fórmulas Trigonométricas Rigurosas</div>
+            <div class="math-row">
+              <span style="color:var(--vec-comp);">Ax = |A| cos(θ):</span>
+              <span class="math-val-highlight math-val-result" id="compAxVal">4.00</span>
+            </div>
+            <div class="math-row">
+              <span style="color:var(--vec-comp);">Ay = |A| sin(θ):</span>
+              <span class="math-val-highlight math-val-result" id="compAyVal">3.00</span>
+            </div>
+            <div class="math-row">
+              <span>Notación con Vectores Unitarios:</span>
+              <span class="math-val-highlight" style="color:var(--text-main);" id="compUnitFormat">4.00 î + 3.00 ĵ</span>
+            </div>
+            <div class="math-row">
+              <span>Teorema de Pitágoras:</span>
+              <span>√(Ax² + Ay²) = |A|</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. PRODUCTO ESCALAR (Section 9) -->
+    <section class="section-block" id="escalar">
+      <div class="section-header">
+        <span class="section-tag">Operación Escalar</span>
+        <h2 class="section-title">8. Producto Escalar (A · B)</h2>
+        <p class="section-subtitle">
+          Operación que produce un escalar y mide la proyección paralela de un vector sobre otro: A · B = |A||B| cos(θ).
+        </p>
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-canvas-card">
+          <div class="canvas-toolbar">
+            <span class="canvas-badge">Proyección Geométrica (Sombra en Verde)</span>
+            <button class="btn btn-outline btn-sm" id="btnResetDot">↺ Reiniciar</button>
+          </div>
+          <div class="canvas-viewport-wrapper">
+            <canvas id="dotCanvas" class="canvas-element"></canvas>
+            <div class="canvas-drag-hint">Modifica el ángulo θ para ver cómo la proyección se hace positiva, cero o negativa</div>
+          </div>
+        </div>
+
+        <div class="lab-controls-card">
+          <div class="param-card">
+            <div class="input-field-group">
+              <label>Ángulo entre vectores (θ): <strong id="dotAngle" style="color:var(--primary);">45.0°</strong></label>
+              <input type="range" id="dotAngleSlider" min="0" max="180" step="1" value="45">
+            </div>
+            <div class="inputs-row">
+              <div class="input-field-group">
+                <label>Magnitud |A|:</label>
+                <input type="range" id="dotMagASlider" min="2" max="7" step="0.5" value="6">
+              </div>
+              <div class="input-field-group">
+                <label>Magnitud |B|:</label>
+                <input type="range" id="dotMagBSlider" min="2" max="6" step="0.5" value="5">
+              </div>
+            </div>
+          </div>
+
+          <div class="dot-product-gauge-card">
+            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.85rem;">
+              <span>Valor del Producto Escalar:</span>
+              <span class="math-val-result" id="dotResultVal" style="color:var(--primary); font-size:1.15rem;">21.21</span>
+            </div>
+            <div class="gauge-track">
+              <div class="gauge-indicator-needle" id="dotGaugeNeedle" style="left:75%;"></div>
+            </div>
+            <div class="gauge-labels">
+              <span>- Máx Negativo</span>
+              <span>0 (Ortogonal)</span>
+              <span>+ Máx Positivo</span>
+            </div>
+          </div>
+
+          <div class="critical-cases-grid">
+            <button class="case-btn" data-angle="0">
+              <strong>θ = 0°</strong><br>Máximo Positivo (Paralelos)
+            </button>
+            <button class="case-btn" data-angle="90">
+              <strong>θ = 90°</strong><br>Cero (Perpendiculares)
+            </button>
+            <button class="case-btn" data-angle="180">
+              <strong>θ = 180°</strong><br>Máximo Negativo (Opuestos)
+            </button>
+          </div>
+
+          <div class="math-display-card">
+            <div class="math-display-header">Fórmula Analítica</div>
+            <div class="math-row">
+              <span>A · B = |A| |B| cos(θ):</span>
+              <span class="math-val-highlight">(<span id="dotMagA">6.0</span>) · (<span id="dotMagB">5.0</span>) · cos(<span id="dotCos">0.707</span>)</span>
+            </div>
+          </div>
+
+          <div class="physics-app-box">
+            <strong>⚙️ Aplicación Física: Trabajo Mecánico (W = F · d)</strong>
+            <p style="margin-top:0.25rem;">
+              Si una fuerza F arrastra un objeto a lo largo de un desplazamiento d, el trabajo es:
+              <br><code>W = F · d = |F| |d| cos(θ)</code> = <strong class="math-val-result" id="physicsWorkVal">21.2 Joules (J)</strong>.
+              <br><em>Si la fuerza es perpendicular (90°), el trabajo mecánico es exactamente cero (W = 0).</em>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. PRODUCTO VECTORIAL 3D (Section 10) -->
+    <section class="section-block" id="vectorial">
+      <div class="section-header">
+        <span class="section-tag">Operación Tridimensional</span>
+        <h2 class="section-title">9. Producto Vectorial (A × B = C)</h2>
+        <p class="section-subtitle">
+          Genera un vector perpendicular al plano de A y B cuya magnitud es el área del paralelogramo delimitado por ambos.
+        </p>
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-canvas-card">
+          <div class="canvas-toolbar">
+            <span class="canvas-badge">🌐 Escena 3D Interactiva (WebGL)</span>
+            <div class="canvas-controls-mini">
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="crossOrderToggle"> Invertir orden (<span id="crossOrderLabel">A × B</span>)
+              </label>
+              <button class="btn btn-outline btn-sm" id="btnResetCamCross">🎥 Centrar Cámara</button>
+            </div>
+          </div>
+
+          <div class="container-3d" id="crossProduct3DContainer">
+            <div class="controls-hint-3d">🖱 Clic y arrastra para orbitar en 3D | Rueda del mouse para zoom</div>
+          </div>
+        </div>
+
+        <div class="lab-controls-card">
+          <div class="theory-callout">
+            <h4>Regla de la Mano Derecha y Anticonmutatividad</h4>
+            <p>
+              El vector resultante <strong>C = A × B</strong> es perpendicular a A y a B. Si los dedos de la mano derecha van de A hacia B, el pulgar extendido indica el sentido de C. Además, <strong>B × A = -(A × B)</strong>.
+            </p>
+          </div>
+
+          <div class="param-card">
+            <div class="input-field-group">
+              <label>Ángulo entre A y B (θ): <strong id="crossAngle" style="color:var(--primary);">60.0°</strong></label>
+              <input type="range" id="crossAngleSlider" min="0" max="180" step="1" value="60">
+            </div>
+          </div>
+
+          <div class="critical-cases-grid">
+            <button class="case-btn cross-case-btn" data-angle="0">
+              <strong>θ = 0°</strong><br>Colineales → C = 0
+            </button>
+            <button class="case-btn cross-case-btn" data-angle="90">
+              <strong>θ = 90°</strong><br>Perpendiculares → Máximo
+            </button>
+            <button class="case-btn cross-case-btn" data-angle="180">
+              <strong>θ = 180°</strong><br>Opuestos → C = 0
+            </button>
+          </div>
+
+          <div class="math-display-card">
+            <div class="math-display-header">Magnitud y Área del Paralelogramo</div>
+            <div class="math-row">
+              <span>|A × B| = |A| |B| sin(θ):</span>
+              <span class="math-val-highlight">(<span id="crossMagA">5.0</span>) · (<span id="crossMagB">4.0</span>) · sin(<span id="crossSin">0.866</span>)</span>
+            </div>
+            <div class="math-row">
+              <span>Magnitud |C| resultante:</span>
+              <span class="math-val-highlight math-val-result" id="crossResultMag">17.32</span>
+            </div>
+            <div class="math-row">
+              <span>Área del paralelogramo (dorado):</span>
+              <span class="math-val-highlight math-val-result" id="crossAreaVal">17.32 u²</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. LABORATORIO 3D COMPLETO (Section 11) -->
+    <section class="section-block" id="espacio-3d">
+      <div class="section-header">
+        <span class="section-tag">Espacio Tridimensional ℝ³</span>
+        <h2 class="section-title">10. Laboratorio de Vectores en el Espacio 3D</h2>
+        <p class="section-subtitle">
+          Ejes X (Rojo), Y (Verde), Z (Azul), manipulación de componentes (x, y, z), cosenos directores y operaciones en ℝ³.
+        </p>
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-canvas-card">
+          <div class="canvas-toolbar">
+            <div class="canvas-controls-mini">
+              <button class="btn btn-outline btn-sm btn-space-op active" data-op="sum">Suma (A + B)</button>
+              <button class="btn btn-outline btn-sm btn-space-op" data-op="sub">Resta (A - B)</button>
+              <button class="btn btn-outline btn-sm btn-space-op" data-op="cross">Prod. Vectorial (A × B)</button>
+            </div>
+            <div class="canvas-controls-mini">
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="spaceShowBoxes" checked> Cajas 3D
+              </label>
+              <button class="btn btn-outline btn-sm" id="btnToggleGridSpace">▦ Cuadrícula</button>
+              <button class="btn btn-outline btn-sm" id="btnResetCamSpace">🎥 Centrar</button>
+              <button class="btn btn-outline btn-sm" id="btnResetSpace3D">↺ Reiniciar</button>
+            </div>
+          </div>
+
+          <div class="container-3d" id="space3DContainer">
+            <div class="controls-hint-3d">🖱 Ejes: Rojo (+X) | Verde (+Y) | Azul (+Z) | Arrastra para orbitar en 3D</div>
+          </div>
+        </div>
+
+        <div class="lab-controls-card">
+          <div class="inputs-row">
+            <div class="param-card">
+              <span class="param-title" style="color:var(--vec-a)">🔷 A = (Ax, Ay, Az)</span>
+              <div class="inputs-row three-col">
+                <div class="input-field-group">
+                  <label>Ax:</label>
+                  <input type="number" id="spaceAx" class="coord-num-input" value="4" step="1">
+                </div>
+                <div class="input-field-group">
+                  <label>Ay:</label>
+                  <input type="number" id="spaceAy" class="coord-num-input" value="5" step="1">
+                </div>
+                <div class="input-field-group">
+                  <label>Az:</label>
+                  <input type="number" id="spaceAz" class="coord-num-input" value="3" step="1">
+                </div>
+              </div>
+            </div>
+
+            <div class="param-card">
+              <span class="param-title" style="color:var(--vec-b)">🟣 B = (Bx, By, Bz)</span>
+              <div class="inputs-row three-col">
+                <div class="input-field-group">
+                  <label>Bx:</label>
+                  <input type="number" id="spaceBx" class="coord-num-input" value="-3" step="1">
+                </div>
+                <div class="input-field-group">
+                  <label>By:</label>
+                  <input type="number" id="spaceBy" class="coord-num-input" value="3" step="1">
+                </div>
+                <div class="input-field-group">
+                  <label>Bz:</label>
+                  <input type="number" id="spaceBz" class="coord-num-input" value="5" step="1">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="math-display-card">
+            <div class="math-display-header">Métricas y Resultados en ℝ³</div>
+            <div class="math-row">
+              <span>Magnitud |A| = √(Ax² + Ay² + Az²):</span>
+              <span class="math-val-highlight math-val-result" id="spaceMagA">7.07 u</span>
+            </div>
+            <div class="math-row">
+              <span>Magnitud |B|:</span>
+              <span class="math-val-highlight math-val-result" id="spaceMagB">6.56 u</span>
+            </div>
+            <div class="math-row">
+              <span>Ángulo espacial entre A y B:</span>
+              <span class="math-val-highlight math-val-result" id="spaceAngleBetween">66.8°</span>
+            </div>
+            <div class="math-row">
+              <span>Producto Escalar (A · B):</span>
+              <span class="math-val-highlight math-val-result" id="spaceDotVal">18.00</span>
+            </div>
+            <div class="math-row">
+              <span>Cosenos directores de A:</span>
+              <span class="math-val-result" style="font-size:0.82rem;">
+                cos α:<span id="spaceCosAlpha">0.57</span>, cos β:<span id="spaceCosBeta">0.71</span>, cos γ:<span id="spaceCosGamma">0.42</span>
+              </span>
+            </div>
+            <div class="math-row" style="background:var(--bg-card-subtle); padding:0.5rem; border-radius:var(--radius-sm); border:1px solid rgba(16,185,129,0.3);">
+              <strong style="color:var(--vec-res);">Vector Resultante R (Verde):</strong>
+              <span class="math-val-highlight" style="color:var(--vec-res);">
+                (<span class="math-val-result" id="spaceRx">1.00</span>, <span class="math-val-result" id="spaceRy">8.00</span>, <span class="math-val-result" id="spaceRz">8.00</span>) | |R| = <span class="math-val-result" id="spaceRMag">11.36</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. APLICACIONES FÍSICAS EN EL MUNDO REAL (Section 13) -->
+    <section class="section-block" id="fisica-real">
+      <div class="section-header">
+        <span class="section-tag">Vectores en el Mundo Real</span>
+        <h2 class="section-title">11. Aplicaciones Físicas</h2>
+        <p class="section-subtitle">
+          Simulaciones dinámicas de fuerzas y Segunda Ley de Newton (ΣF = ma), navegación en ríos, movimiento circular y trabajo mecánico.
+        </p>
+      </div>
+
+      <div class="physics-nav-tabs">
+        <button class="btn-physics-tab active" data-tab="forces">⚙️ Fuerzas y Segunda Ley (ΣF = ma)</button>
+        <button class="btn-physics-tab" data-tab="river">⛵ Navegación y Corrientes en Río</button>
+        <button class="btn-physics-tab" data-tab="circular">🔄 Movimiento Circular (v ⟂ a_c)</button>
+        <button class="btn-physics-tab" data-tab="work">📦 Trabajo Mecánico (W = F · d)</button>
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-canvas-card">
+          <div class="canvas-toolbar">
+            <span class="canvas-badge">Simulador Físico Dinámico</span>
+            <div class="canvas-controls-mini">
+              <button class="btn btn-primary btn-sm" id="btnPhysicsPlay">▶ Iniciar Simulación</button>
+              <button class="btn btn-outline btn-sm" id="btnPhysicsReset">↺ Reiniciar</button>
+            </div>
+          </div>
+          <div class="physics-sim-container">
+            <canvas id="physicsSimCanvas" class="canvas-element"></canvas>
+          </div>
+        </div>
+
+        <div class="lab-controls-card">
+          <!-- Card for Forces Mode -->
+          <div class="phys-tab-content" id="physCard_forces">
+            <div class="theory-callout">
+              <h4>Segunda Ley de Newton</h4>
+              <p>
+                La fuerza neta <strong>ΣF = F₁ + F₂</strong> determina la aceleración que experimenta el cuerpo: <strong>a = ΣF / m</strong>. El cuerpo acelerará exactamente en la dirección del vector fuerza neta resultante.
+              </p>
+            </div>
+
+            <div class="param-card">
+              <div class="input-field-group">
+                <label>Masa del Bloque (m): <strong id="physMassVal" style="color:var(--primary);">2.0 kg</strong></label>
+                <input type="range" id="physMassSlider" min="0.5" max="10" step="0.5" value="2.0">
+              </div>
+            </div>
+
+            <div class="math-display-card">
+              <div class="math-display-header">Dinámica en Tiempo Real</div>
+              <div class="math-row">
+                <span style="color:var(--vec-res);">Fuerza Neta ΣF:</span>
+                <span class="math-val-highlight math-val-result" id="physFNetDisplay">(4.00, 7.00) N [|F| = 8.06 N]</span>
+              </div>
+              <div class="math-row">
+                <span>Aceleración a = ΣF / m:</span>
+                <span class="math-val-highlight math-val-result" id="physAccelDisplay">(2.00, 3.50) m/s² [|a| = 4.03 m/s²]</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card for River Mode -->
+          <div class="phys-tab-content" id="physCard_river" style="display:none;">
+            <div class="theory-callout">
+              <h4>Composición de Velocidades Relativas</h4>
+              <p>
+                La velocidad total del barco respecto a tierra es la suma vectorial: <strong>v_total = v_barco + v_rio</strong>. La corriente arrastra al barco aguas abajo aumentando su velocidad pero desviando su rumbo.
+              </p>
+            </div>
+            <div class="math-display-card">
+              <div class="math-display-header">Velocidad Resultante de Navegación</div>
+              <div class="math-row">
+                <span>v_resultante:</span>
+                <span class="math-val-highlight math-val-result" id="physRiverDisplay">|v_res| = 6.71 m/s (θ = 40.5°)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card for Circular Mode -->
+          <div class="phys-tab-content" id="physCard_circular" style="display:none;">
+            <div class="theory-callout">
+              <h4>Ortogonalidad en Movimiento Circular</h4>
+              <p>
+                La velocidad tangencial y la aceleración centrípeta son estrictamente perpendiculares: <strong>v ⟂ a_c</strong>. Su producto escalar es nulo (<strong>v · a_c = 0</strong>), demostrando que no se realiza trabajo y la rapidez escalar no cambia.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card for Work Mode -->
+          <div class="phys-tab-content" id="physCard_work" style="display:none;">
+            <div class="theory-callout">
+              <h4>Trabajo Mecánico de una Fuerza</h4>
+              <p>
+                Solo la componente de la fuerza paralela al desplazamiento (<strong>F cos θ</strong>) realiza trabajo mecánico sobre el cuerpo: <strong>W = F · d = |F||d|cos(θ)</strong>.
+              </p>
+            </div>
+            <div class="math-display-card">
+              <div class="math-display-header">Cálculo de Trabajo</div>
+              <div class="math-row">
+                <span>Trabajo Mecánico (W):</span>
+                <span class="math-val-highlight math-val-result" id="physWorkDisplay">W = 163.83 Julios (J)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. TABLA COMPARATIVA (Section 10 Review) -->
+    <section class="section-block" id="comparacion">
+      <div class="section-header">
+        <span class="section-tag">Síntesis Analítica</span>
+        <h2 class="section-title">12. Comparativa de Operaciones Vectoriales</h2>
+        <p class="section-subtitle">
+          Resumen de propiedades algebraicas, conmutatividad e interpretación física de cada operación.
+        </p>
+      </div>
+
+      <div class="comparison-table-wrapper">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Operación</th>
+              <th>Tipo de Resultado</th>
+              <th>Fórmula Fundamental</th>
+              <th>Propiedad Conmutativa</th>
+              <th>Interpretación Física</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong style="color:var(--vec-a)">Suma Vectorial</strong> (A + B)</td>
+              <td><span class="result-badge badge-vector">Vector</span></td>
+              <td><code>R = (Ax+Bx)î + (Ay+By)ĵ</code></td>
+              <td><strong>Sí:</strong> A + B = B + A</td>
+              <td>Superposición de fuerzas o desplazamientos sucesivos.</td>
+            </tr>
+            <tr>
+              <td><strong style="color:var(--vec-neg-b)">Diferencia</strong> (A - B)</td>
+              <td><span class="result-badge badge-vector">Vector</span></td>
+              <td><code>D = A + (-B)</code></td>
+              <td><strong>No:</strong> A - B = -(B - A)</td>
+              <td>Variación o cambio entre dos estados (ej. Δv = vf - vi).</td>
+            </tr>
+            <tr>
+              <td><strong style="color:var(--primary)">Producto Escalar</strong> (A · B)</td>
+              <td><span class="result-badge badge-scalar">Escalar</span></td>
+              <td><code>A · B = |A||B| cos(θ)</code></td>
+              <td><strong>Sí:</strong> A · B = B · A</td>
+              <td>Trabajo mecánico (W = F · d), energía o flujo.</td>
+            </tr>
+            <tr>
+              <td><strong style="color:var(--vec-res)">Producto Vectorial</strong> (A × B)</td>
+              <td><span class="result-badge badge-vector">Vector</span></td>
+              <td><code>|C| = |A||B| sin(θ)</code></td>
+              <td><strong>Anticonmutativo:</strong> A × B = -(B × A)</td>
+              <td>Torque o momento de fuerza (τ = r × F) y magnetismo.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 13. QUIZ INTERACTIVO MULTINIVEL (Section 14) -->
+    <section class="section-block" id="quiz">
+      <div class="section-header">
+        <span class="section-tag">Evaluación Diagnóstica</span>
+        <h2 class="section-title">13. Quiz Interactivo Multinivel</h2>
+        <p class="section-subtitle">
+          16 preguntas graduadas en 4 niveles de dificultad (Conceptual, Cálculo, Aplicación y Física) con feedback y procedimientos analíticos paso a paso.
+        </p>
+      </div>
+
+      <div id="quizContainer"></div>
+    </section>
+
+    <!-- 14. ⚠️ ERRORES QUE DEBES EVITAR (Section 15) -->
+    <section class="section-block" id="errores">
+      <div class="section-header">
+        <span class="section-tag">⚠️ Lo que debes saber</span>
+        <h2 class="section-title">14. Errores Frecuentes que Debes Evitar</h2>
+        <p class="section-subtitle">
+          Análisis de las 9 equivocaciones más comunes en álgebra y física vectorial con sus respectivas correcciones rigurosas.
+        </p>
+      </div>
+
+      <div class="mistakes-grid">
+        <!-- Error 1 -->
+        <div class="mistake-card">
+          <div class="mistake-header">
+            <span class="mistake-title">❌ Confundir magnitud con vector</span>
+            <span class="mistake-num-badge">1</span>
+          </div>
+          <div class="mistake-body">
+            <div class="mistake-wrong-box">
+              <strong>Error:</strong> Escribir <code>A = 5</code> o tratar a un vector como un simple número sin orientación.
+            </div>
+            <div class="mistake-correct-box">
+              <strong>Correcto:</strong> La magnitud es un escalar positivo <code>|A| = 5</code>, mientras que el vector requiere dirección y sentido: <code>A = (3, 4)</code> o <code>A = 5 u a 53.1°</code>.
+            </div>
+            <div class="mistake-visual-mini">|A| ≥ 0 (escalar) ≠ A = Ax î + Ay ĵ (vector)</div>
+          </div>
+        </div>
+
+        <!-- Error 2 -->
+        <div class="mistake-card">
+          <div class="mistake-header">
+            <span class="mistake-title">❌ Sumar magnitudes en lugar de componentes</span>
+            <span class="mistake-num-badge">2</span>
+          </div>
+          <div class="mistake-body">
+            <div class="mistake-wrong-box">
+              <strong>Error:</strong> Si |A| = 3 y |B| = 4, asumir que |A + B| = 7.
+            </div>
+            <div class="mistake-correct-box">
+              <strong>Correcto:</strong> Desigualdad triangular: <code>|A + B| ≤ |A| + |B|</code>. Solo es 7 si son perfectamente paralelos (θ = 0°). Si forman 90°, |A + B| = 5.
+            </div>
+            <div class="mistake-visual-mini">R = √(Rx² + Ry²), NO |A| + |B|</div>
+          </div>
+        </div>
+
+        <!-- Error 3 -->
+        <div class="mistake-card">
+          <div class="mistake-header">
+            <span class="mistake-title">❌ Ignorar el signo de las componentes</span>
+            <span class="mistake-num-badge">3</span>
+          </div>
+          <div class="mistake-body">
+            <div class="mistake-wrong-box">
+              <strong>Error:</strong> Olvidar los signos negativos en cuadrantes II, III o IV y sumar magnitudes absolutas.
+            </div>
+            <div class="mistake-correct-box">
+              <strong>Correcto:</strong> En el II Cuadrante, Ax < 0 y Ay > 0. Se debe conservar el signo algebraico exacto en <code>Rx = Ax + Bx</code>.
+            </div>
+            <div class="mistake-visual-mini">II Cuad: (-Ax, +Ay) | III Cuad: (-Ax, -Ay)</div>
+          </div>
+        </div>
+
+        <!-- Error 4 -->
+        <div class="mistake-card">
+          <div class="mistake-header">
+            <span class="mistake-title">❌ Usar arctan sin considerar el cuadrante</span>
+            <span class="mistake-num-badge">4</span>
+          </div>
+          <div class="mistake-body">
+            <div class="mistake-wrong-box">
+              <strong>Error:</strong> Aplicar <code>θ = arctan(Ay / Ax)</code> y pensar que la calculadora da el ángulo correcto en todos los casos.
+            </div>
+            <div class="mistake-correct-box">
+              <strong>Correcto:</strong> La función <code>arctan</code> solo devuelve valores entre -90° y +90°. Si Ax < 0, se debe sumar 180° (usar siempre la función <code>atan2(Ay, Ax)</code>).
+            </div>
+            <div class="mistake-visual-mini">(-3, 3) ⟹ arctan(-1) = -45° ➔ Real: 135° (+180°)</div>
+          </div>
+        </div>
+
+        <!-- Error 5 -->
+        <div class="mistake-card">
+          <div class="mistake-header">
+            <span class="mistake-title">❌ Confundir dirección con sentido</span>
+            <span class="mistake-num-badge">5</span>
+          </div>
+          <div class="mistake-body">
+            <div class="mistake-wrong-box">
+              <strong>Error:</strong> Decir que dos vectores opuestos tienen "direcciones distintas".
+            </div>
+            <div class="mistake-correct-box">
+              <strong>Correcto:</strong> Comparten la <strong>misma dirección</strong> (la misma recta de acción, ej. horizontal), pero tienen <strong>sentidos opuestos</strong> (uno al Este, otro al Oeste).
+            </div>
+            <div class="mistake-visual-mini">Dirección = Recta / Pendiente | Sentido = Saeta (±)</div>
+          </div>
+        </div>
+
+        <!-- Error 6 -->
+        <div class="mistake-card">
+          <div class="mistake-header">
+            <span class="mistake-title">❌ Creer que la resultante siempre es mayor</span>
+            <span class="mistake-num-badge">6</span>
+          </div>
+          <div class="mistake-body">
+            <div class="mistake-wrong-box">
+              <strong>Error:</strong> Pensar que al "sumar" dos vectores, el resultado forzosamente debe ser mayor que los vectores individuales.
+            </div>
+            <div class="mistake-correct-box">
+              <strong>Correcto:</strong> Dos fuerzas de 10 N opuestas dan una resultante de 0 N. La resultante puede ser menor que cualquiera de ellos.
+            </div>
+            <div class="mistake-visual-mini">|A - B| ≤ |R| ≤ |A + B|</div>
+          </div>
+        </div>
+
+        <!-- Error 7 -->
+        <div class="mistake-card">
+          <div class="mistake-header">
+            <span class="mistake-title">❌ Olvidar las unidades en física</span>
+            <span class="mistake-num-badge">7</span>
+          </div>
+          <div class="mistake-body">
+            <div class="mistake-wrong-box">
+              <strong>Error:</strong> Reportar una fuerza como <code>F = 25</code> sin indicar unidades o sumar metros con Newtons.
+            </div>
+            <div class="mistake-correct-box">
+              <strong>Correcto:</strong> Un vector físico requiere unidades dimensionales homogéneas: <code>F = (15 î + 20 ĵ) N</code>. Solo se pueden sumar vectores de igual dimensión física.
+            </div>
+            <div class="mistake-visual-mini">Fuerza [N], Vel [m/s], Acel [m/s²], Trabajo [J]</div>
+          </div>
+        </div>
+
+        <!-- Error 8 -->
+        <div class="mistake-card">
+          <div class="mistake-header">
+            <span class="mistake-title">❌ Confundir producto escalar con vectorial</span>
+            <span class="mistake-num-badge">8</span>
+          </div>
+          <div class="mistake-body">
+            <div class="mistake-wrong-box">
+              <strong>Error:</strong> Creer que <code>A · B</code> produce una flecha o que <code>A × B</code> da un número.
+            </div>
+            <div class="mistake-correct-box">
+              <strong>Correcto:</strong> <code>A · B</code> es un <strong>escalar puro</strong> (número). <code>A × B</code> es un <strong>vector perpendicular</strong> en el espacio.
+            </div>
+            <div class="mistake-visual-mini">A · B ∈ ℝ (número) | A × B ∈ ℝ³ (vector)</div>
+          </div>
+        </div>
+
+        <!-- Error 9 -->
+        <div class="mistake-card">
+          <div class="mistake-header">
+            <span class="mistake-title">❌ Olvidar que los vectores son libres</span>
+            <span class="mistake-num-badge">9</span>
+          </div>
+          <div class="mistake-body">
+            <div class="mistake-wrong-box">
+              <strong>Error:</strong> Pensar que un vector cambia si se mueve su origen a otro punto del plano cartesiano.
+            </div>
+            <div class="mistake-correct-box">
+              <strong>Correcto:</strong> En álgebra de vectores libres, dos vectores son idénticos si tienen igual magnitud, dirección y sentido, sin importar dónde se dibujen.
+            </div>
+            <div class="mistake-visual-mini">Traslación paralela ⟹ Vector invariante</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15. MINI FORMULARIO DE REFERENCIA (Section 16) -->
+    <section class="section-block" id="formulario">
+      <div class="section-header">
+        <span class="section-tag">Referencia Rápida</span>
+        <h2 class="section-title">15. Formulario Esencial de Vectores</h2>
+        <p class="section-subtitle">
+          Compendio de fórmulas matemáticas y ecuaciones fundamentales de la física vectorial.
+        </p>
+      </div>
+
+      <div class="formula-grid">
+        <div class="formula-card">
+          <div class="formula-title">📏 Magnitud 2D</div>
+          <div class="formula-math-box">|A| = √(Ax² + Ay²)</div>
+          <p class="formula-desc">Módulo o longitud de un vector en el plano cartesiano por teorema de Pitágoras.</p>
+        </div>
+
+        <div class="formula-card">
+          <div class="formula-title">📐 Dirección y Cuadrantes (2D)</div>
+          <div class="formula-math-box">θ = atan2(Ay, Ax)</div>
+          <p class="formula-desc">Ángulo medido desde el semieje positivo +X respetando rigurosamente los signos.</p>
+        </div>
+
+        <div class="formula-card">
+          <div class="formula-title">🌐 Magnitud 3D</div>
+          <div class="formula-math-box">|A| = √(Ax² + Ay² + Az²)</div>
+          <p class="formula-desc">Longitud espacial en ℝ³ a partir de sus tres componentes ortogonales.</p>
+        </div>
+
+        <div class="formula-card">
+          <div class="formula-title">➕ Suma Vectorial</div>
+          <div class="formula-math-box">R = (Ax+Bx)î + (Ay+By)ĵ</div>
+          <p class="formula-desc">Superposición término a término de componentes independientes.</p>
+        </div>
+
+        <div class="formula-card">
+          <div class="formula-title">➖ Resta de Vectores</div>
+          <div class="formula-math-box">D = A - B = A + (-B)</div>
+          <p class="formula-desc">Suma del vector opuesto: (Ax - Bx)î + (Ay - By)ĵ.</p>
+        </div>
+
+        <div class="formula-card">
+          <div class="formula-title">⚡ Producto Escalar</div>
+          <div class="formula-math-box">A · B = |A||B| cos(θ) = AxBx + AyBy</div>
+          <p class="formula-desc">Mide la proyección paralela. Cero si y solo si son perpendiculares (θ = 90°).</p>
+        </div>
+
+        <div class="formula-card">
+          <div class="formula-title">🧭 Ángulo entre Vectores</div>
+          <div class="formula-math-box">cos(θ) = (A · B) / (|A||B|)</div>
+          <p class="formula-desc">Determina el ángulo entre dos vectores no nulos mediante su producto escalar.</p>
+        </div>
+
+        <div class="formula-card">
+          <div class="formula-title">🔄 Producto Vectorial (3D)</div>
+          <div class="formula-math-box">|A × B| = |A||B| sin(θ)</div>
+          <p class="formula-desc">Vector perpendicular al plano. Magnitud igual al área del paralelogramo.</p>
+        </div>
+
+        <div class="formula-card">
+          <div class="formula-title">📐 Ley de Cosenos Vectorial</div>
+          <div class="formula-math-box">|R| = √(A² + B² + 2AB cos θ)</div>
+          <p class="formula-desc">Magnitud de la resultante de dos vectores con ángulo θ entre ellos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16. RETO FINAL: DESAFÍO DEL LABORATORIO (Section 23) -->
+    <section class="section-block" id="reto">
+      <div class="section-header">
+        <span class="section-tag">Desafío Integrador</span>
+        <h2 class="section-title">16. Desafío del Laboratorio</h2>
+        <p class="section-subtitle">
+          Situación física real guiada en 7 pasos consecutivos con validación matemática y explicación detallada.
+        </p>
+      </div>
+
+      <div id="challengeContainer"></div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       FOOTER (Section 17 & 18)
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div style="max-width: 1400px; margin: 0 auto;">
+      <p style="font-weight: 800; color: var(--text-main); font-size: 1.1rem; margin-bottom: 0.4rem;">
+        VECTORES LAB — Laboratorio Virtual Interactivo de Física & Matemáticas
+      </p>
+      <p style="max-width: 800px; margin: 0 auto; line-height: 1.6;">
+        Desarrollado para estudiantes de bachillerato avanzado, primeros cursos de física universitaria e ingeniería. Rigor en signos, cuadrantes con atan2, unidades del Sistema Internacional (N, m, m/s, m/s², J) y representaciones dinámicas 2D y 3D.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript Modules -->
+  <script src="js/vector-math.js"></script>
+  <script src="js/canvas-2d.js"></script>
+  <script src="js/scene-3d.js"></script>
+  <script src="js/polygon-sim.js"></script>
+  <script src="js/physics-sim.js"></script>
+  <script src="js/quiz-engine.js"></script>
+  <script src="js/challenge-engine.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
